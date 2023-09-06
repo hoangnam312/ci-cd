@@ -20,7 +20,7 @@ paths:
 - node_modules/
 policy: pull
 script:
--npm run build
+- npm run build
 artifacts:
 paths:
 - build
