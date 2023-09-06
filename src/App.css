@@ -1,0 +1,7 @@
+.App {
+  padding: 100px;
+}
+
+.App > input {
+  padding: 10px;
+}
