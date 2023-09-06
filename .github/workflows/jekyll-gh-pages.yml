@@ -1,56 +1,25 @@
-stages:
-- Install
-- Build
-- Deploy
+name: Node.js CI
 
-.install_template: &install_definition
-stage: Install
-cache:
-key: master
-paths:
-- node_modules/
-script:
-- npm install
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
-.build_template: &build_definition
-stage: Build
-cache:
-key: master
-paths:
-- node_modules/
-policy: pull
-script:
-- npm run build
-artifacts:
-paths:
-- build
+jobs:
+  build:
 
-.deploy_template: &deploy_definition
-stage: Deploy
-image: node:8.14.0-alpine
-script:
-- echo "Deploy"
+    runs-on: ubuntu-latest
 
-install:
-<<: *install_definition
-environment:
-name: production
-only:
-- master
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x]
 
-build:
-<<: *build_definition
-variables:
-REACT_APP_ENV: production
-environment:
-name: production
-only:
-- master
-
-deploy:
-<<: *deploy_definition
-when: manual
-environment:
-name: production
-only:
-- master
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm ci
+    - run: npm run build
